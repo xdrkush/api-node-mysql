@@ -1,86 +1,62 @@
 /*
  * Import Module
  ****************/
+const {
+    selectAll, insertInto, updateOne, deleteOne, deleteAll
+} = require('../store-sql')
 
 /*
  * Controller
  *************/
-
 // Method Get
 exports.get = async (req, res) => {
-    // SQL récupération de tout les users
-    let sql = `SELECT * FROM users`;
+    console.log('Controller GET USER: ')
 
-    await db.query(sql, (error, data, fields) => {
-        if (error) throw error;
+    selectAll('users').then(data => {
         res.json({
             status: 200,
             listUser: data,
             message: "users lists retrieved successfully"
         })
-    })
+    }).catch(err => console.log(err))
 }
 
 // Method Post
 exports.post = async (req, res) => {
+    console.log('Controller POST USER: ', req.body)
+
     // SQL pour creer un users
-    let sql = `INSERT INTO users (name,email,mobile) values(?)`;
-    let values = [
-        req.body.name,
-        req.body.email,
-        req.body.mobile
-    ];
-    await db.query(sql, [values], function (err, data, fields) {
-        if (err) throw err;
-        // SQL récupération de tout les users
-        let sql = `SELECT * FROM users`;
-        db.query(sql, (error, dataRes, fields) => {
-            if (error) throw error;
+    // (name, email, mobile)
+    insertInto('users', { ...req.body }).then(() => {
+        selectAll('users').then(data => {
             res.json({
                 status: 200,
-                listUser: dataRes,
+                listUser: data,
                 message: "Add Users successfully"
             })
         })
-    })
+    }).catch(err => console.log(err))
 }
 
 // Method Edit One User
-exports.editOne = async (req, res) => {
-    // SQL pour editer un users
-    let sql = `UPDATE users 
-                   SET name = '${req.body.name}',
-                       mobile = '${req.body.mobile}',
-                       email = '${req.body.email}'
-                   WHERE id = '${req.params.id}';`
+exports.editOne = (req, res) => {
+    console.log('Controller EditOne USER: ', req.body)
 
-    await db.query(sql, function (err, edit, fields) {
-        if (err) throw err;
-        // SQL récupération de tout les users
-        let sql = `SELECT * FROM users`;
-        console.log(edit)
-        db.query(sql, (error, data, fields) => {
-            if (error) throw error;
+    updateOne('users', { ...req.body }, req.params.id).then(() => {
+        selectAll('users').then(data => {
             res.json({
                 status: 200,
                 listUser: data,
                 message: "Update Users successfully"
             })
         })
-    })
+    }).catch(err => console.log(err))
 }
 
 // Method Delete One
-exports.deleteOne = async (req, res) => {
-    // SQL pour delete un users à partir de son id
-    let sql = `DELETE FROM users  WHERE id = ?`;
-    let values = [ req.params.id ];
-    await db.query(sql, [values], function (err, del, fields) {
-        if (err) throw err;
-        // SQL récupération de tout les users
-        let sql = `SELECT * FROM users`;
-        db.query(sql, (error, data, fields) => {
-            if (error) throw error;
+exports.deleteOne = (req, res) => {
+    deleteOne('users', req.params.id).then(() => {
+        selectAll('users').then(data => {
             res.json({
                 status: 200,
                 listUser: data,
@@ -89,20 +65,13 @@ exports.deleteOne = async (req, res) => {
         })
     })
 }
-
 // Method Delete All
-exports.deleteAll = async (req, res) => {
-    // SQL pour delete tout les users
-    let sql = `DELETE FROM users`;
-    await db.query(sql, function (err, data, fields) {
-        if (err) throw err;
-        // SQL récupération de tout les users
-        let sql = `SELECT * FROM users`;
-        db.query(sql, (error, data, fields) => {
-            if (error) throw error;
+exports.deleteAll = (req, res) => {
+    deleteAll('users').then(() => {
+        selectAll('users').then(data => {
             res.json({
                 status: 200,
-                dbArticle: data,
+                listUser: data,
                 message: "Delete All Users successfully"
             })
         })

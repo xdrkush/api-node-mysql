@@ -52,4 +52,13 @@ nodemon server.js
 
 (Il ce peux que les commandes soit à peine exact le tuto est en cours de réalisations n'hésiter pas à me tenir au courant)
 
+En cas d'erreur:
+
+```
+error connecting: Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client
+```
+```
+sudo mysql
+alter user 'tuto'@'localhost' identified with mysql_native_password by 'tuto$';
+```
 J'espères que cela poura vous aidez ;)
