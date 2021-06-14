@@ -6,14 +6,18 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mysql": "^2.18.1"
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
+    "node-cron": "^3.0.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "nodemon server.js",
     "dev": "nodemon",
-    "start": "node server.js"
+    "start": "node server.js",
+    "backup": "node database/backup/backup.js"
   },
   "author": "drk",
   "license": "ISC"
