@@ -22,8 +22,13 @@ router.route('/user')
 
 // User ID
 router.route('/user/:id')
+    .get(userController.getID)
     .put(userController.editOne)
     .delete(userController.deleteOne)
+
+// User ID
+router.route('/getuser/:name')
+    .get(userController.getByKey)
 
 // Book
 router.route('/book')

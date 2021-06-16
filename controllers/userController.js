@@ -2,20 +2,44 @@
  * Import Module
  ****************/
 const {
-    selectAll, insertInto, updateOne, deleteOne, deleteAll
+    selectAll, selectAllById, selectAllByKey, insertInto, updateOne, deleteOne, deleteAll
 } = require('../store-sql')
+const { deleteById } = require('../store-sql/delete')
 
 /*
  * Controller
  *************/
+
 // Method Get
 exports.get = async (req, res) => {
     console.log('Controller GET USER: ')
 
-    selectAll('users').then(data => {
+    await selectAll('users').then(data => {
         res.json({
             status: 200,
             listUser: data,
+            message: "users lists retrieved successfully"
+        })
+    }).catch(err => console.log(err))
+}
+
+// Method GetID
+exports.getID = async (req, res) => {
+    await selectAllById('users', req.params.id).then(data => {
+        res.json({
+            status: 200,
+            user: data,
+            message: "users lists retrieved successfully"
+        })
+    }).catch(err => console.log(err))
+}
+
+// Method GetByKey
+exports.getByKey = async (req, res) => {
+    await selectAllByKey('users', req.params).then(data => {
+        res.json({
+            status: 200,
+            user: data,
             message: "users lists retrieved successfully"
         })
     }).catch(err => console.log(err))
@@ -26,9 +50,9 @@ exports.post = async (req, res) => {
     console.log('Controller POST USER: ', req.body)
 
     // SQL pour creer un users
-    // (name, email, mobile)
-    insertInto('users', { ...req.body }).then(() => {
-        selectAll('users').then(data => {
+    // values = (name, email, mobile)
+    await insertInto('users', { ...req.body }).then(async () => {
+        await selectAll('users').then(data => {
             res.json({
                 status: 200,
                 listUser: data,
@@ -55,7 +79,8 @@ exports.editOne = (req, res) => {
 
 // Method Delete One
 exports.deleteOne = (req, res) => {
-    deleteOne('users', req.params.id).then(() => {
+    console.log('Controller DeleteOne USER: ', req.params.id)
+    deleteById('users', req.params.id).then(() => {
         selectAll('users').then(data => {
             res.json({
                 status: 200,
@@ -65,6 +90,7 @@ exports.deleteOne = (req, res) => {
         })
     })
 }
+
 // Method Delete All
 exports.deleteAll = (req, res) => {
     deleteAll('users').then(() => {

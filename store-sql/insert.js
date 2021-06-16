@@ -1,4 +1,6 @@
-
+// Insert into
+// ex: insertInto('table', {name: 'bruno', age: 19}).then().catch()
+// Warn: attention au type de valeur qui doivent être en corélation avec votre DB
 exports.insertInto = (table, body) => {
     const key = [], val = []
     Object.entries(body).forEach(kv => {

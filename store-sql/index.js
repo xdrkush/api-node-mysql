@@ -1,17 +1,23 @@
 
 const { insertInto } = require('./insert')
-const { deleteOne, deleteAll } = require('./delete')
+const { deleteByID, deleteAll } = require('./delete')
 const { updateOne } = require('./update')
-const { selectAll } = require('./select')
-
+const { joinWithID } = require('./join')
+const { selectAll, selectAllById, selectAllByKey, selectOneByID } = require('./select')
 
 module.exports = {
     // Insert
     insertInto,
+
     // Delete
-    deleteOne, deleteAll,
+    deleteByID, deleteAll,
+
     // Update
     updateOne,
+
+    // Join
+    joinWithID,
+
     // Select
-    selectAll
+    selectAll, selectAllById, selectAllByKey, selectOneByID
 }

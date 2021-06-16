@@ -2,22 +2,19 @@
  * Import Module
  ****************/
 const {
-    selectAll, insertInto, updateOne, deleteOne, deleteAll
+    selectAll, insertInto, selectOneByID, deleteByID, joinWithID
 } = require('../store-sql')
 
 /*
  * Controller
  *************/
+// Method Join with id
 exports.getBookJoinUser = (req, res) => {
+    console.log('Controller getBookJoinUser: ', req.params.id)
     // Récupération des books en relation avec l'id de user = books.author_id
-    let sql = `SELECT users.name, books.title, books.description, books.id
-                   FROM users
-                   LEFT OUTER JOIN books
-                   ON users.id = books.author_id 
-                   WHERE users.id = ${parseInt(req.params.id)} ;`
-
-    db.query(sql, function (err, data, fields) {
-        if (err) throw err;
+    // ('table1', 'table2', 'users.id', 'books.author_id', 2)
+    joinWithID('users', 'books', 'users.id', 'books.author_id', req.params.id).then(data => {
+        console.log(data)
         res.json({
             status: 200,
             listBook: data,
@@ -25,13 +22,14 @@ exports.getBookJoinUser = (req, res) => {
         })
     })
 }
+
 // Method Post
 exports.post = async (req, res) => {
     console.log('Controller POST BOOK: ', req.body)
     // SQL pour creer un book
     // (title, description, author_id)
     insertInto('books', { ...req.body }).then(() => {
-        selectAll('books').then(data => {
+        joinWithID('users', 'books', 'users.id', 'books.author_id', req.body.author_id).then(data => {
             res.json({
                 status: 200,
                 listBook: data,
@@ -40,47 +38,28 @@ exports.post = async (req, res) => {
         })
     }).catch(err => console.log(err))
 }
+
 // Method Delete One
+// On veux supprimer un libvre et récupérer en réponse les livre de l'author du livre supprimer
 exports.deleteOne = (req, res) => {
-    let author;
-    // SQL pour récuperer l'id de l'author 
-    let sqlResult = `SELECT books.author_id
-                         FROM books
-                         WHERE books.id = ${parseInt(req.params.id)} ;`;
+    // author sera égale à { author_id: 1 }
+    let authorID;
+    // Récupération de l'author (id)
+    selectOneByID('books', 'books.author_id', req.params.id).then(dataO => {
+        Object.keys(dataO).forEach(key => authorID = dataO[key])
 
-    db.query(sqlResult, (errResult, result) => {
-        if (errResult) throw errResult;
-
-        console.log('controller delete: ', result)
-
-        // Ici on formate notre tableau
-        Object
-            .keys(result)
-            .forEach(function (key) {
-                var row = result[key];
-                author = row.author_id
-            })
-
-        // SQL pour supprimer notre books
-        let sqlDel = `DELETE FROM books WHERE id = ${parseInt(req.params.id)}`;
-        db.query(sqlDel, function (errDel) {
-            if (errDel) throw errDel;
-
-            // SQL pour retrouver les books en relations avec l'users qui a supprimer le books
-            let sql = `SELECT users.name, books.title, books.description, books.id
-                           FROM users
-                           LEFT OUTER JOIN books
-                           ON users.id = books.author_id 
-                           WHERE users.id = ${parseInt(author)};`;
-
-            db.query(sql, (err, data) => {
-                if (err) throw err;
+        // Supression de notre book
+        deleteByID('books', req.params.id).then(d => {
+            // recupération des books de l'user
+            joinWithID('users', 'books', 'users.id', 'books.author_id', authorID).then(data => {
+                console.log('dele', data)
                 res.json({
                     status: 200,
                     listBook: data,
-                    message: "Delete Book successfully"
+                    message: "get Book join User successfully"
                 })
             })
         })
     })
+
 }
