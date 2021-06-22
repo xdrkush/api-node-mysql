@@ -52,4 +52,6 @@ nodemon server.js
 
 (Il ce peux que les commandes soit à peine exact le tuto est en cours de réalisations n'hésiter pas à me tenir au courant)
 
+Il y a une deuxième branch avec toute les requetes en asynchrone ;)
+
 J'espères que cela poura vous aidez ;)
