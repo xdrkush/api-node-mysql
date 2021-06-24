@@ -52,6 +52,18 @@ nodemon server.js
 
 (Il ce peux que les commandes soit à peine exact le tuto est en cours de réalisations n'hésiter pas à me tenir au courant)
 
+# N'oublier pas la ligne dans server.js
+```
+const query = util.promisify(db.query).bind(db);
+global.query = query;
+```
+ce qui va nous permettre de gèrer le circular.json de nos requête SQL
+
+et donc de pouvoire utiliser
+```
+
+```
+
 Il y a une deuxième branch avec toute les requetes en asynchrone ;)
 
 J'espères que cela poura vous aidez ;)

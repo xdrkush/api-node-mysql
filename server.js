@@ -8,6 +8,7 @@ const
     mysql = require('mysql'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
+    util = require('util'),
     port = process.env.PORT || 4000;
 
 // Cors
@@ -29,6 +30,9 @@ db.connect((err) => {
     if (err) console.error('error connecting: ' + err.stack);
     console.log('connected as id ' + db.threadId);
 });
+
+const query = util.promisify(db.query).bind(db);
+global.query = query;
 
 // Express Static (Permet de pointer un dossier static sur une URL)
 // Exemple: le chemin /assets nous donnera accès au dossier public

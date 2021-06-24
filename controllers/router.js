@@ -27,7 +27,9 @@ router.route('/user/:id')
 
 // Book
 router.route('/book')
+    .get(bookController.get)
     .post(bookController.post)
+    .delete(bookController.deleteAll)
 
 // Book ID
 router.route('/book/:id')
