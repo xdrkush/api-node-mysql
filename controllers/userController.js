@@ -2,9 +2,8 @@
  * Import Module
  ****************/
 const {
-    selectAll, selectAllById, selectAllByKey, insertInto, updateOne, deleteOne, deleteAll
+    selectAll, selectAllById, selectAllByKey, insertInto, updateOne, deleteById, deleteAll
 } = require('../store-sql')
-const { deleteById } = require('../store-sql/delete')
 
 /*
  * Controller
@@ -13,93 +12,78 @@ const { deleteById } = require('../store-sql/delete')
 // Method Get
 exports.get = async (req, res) => {
     console.log('Controller GET USER: ')
-
-    await selectAll('users').then(data => {
-        res.json({
-            status: 200,
-            listUser: data,
-            message: "users lists retrieved successfully"
-        })
-    }).catch(err => console.log(err))
+    res.json({
+        status: 200,
+        listUser: await selectAll('users'),
+        message: "users lists retrieved successfully"
+    })
 }
 
 // Method GetID
 exports.getID = async (req, res) => {
-    await selectAllById('users', req.params.id).then(data => {
-        res.json({
-            status: 200,
-            user: data,
-            message: "users lists retrieved successfully"
-        })
-    }).catch(err => console.log(err))
+    console.log('Controller GET USER ID: ')
+    res.json({
+        status: 200,
+        user: await selectAllById('users', req.params.id),
+        message: "users lists retrieved successfully"
+    })
 }
 
 // Method GetByKey
 exports.getByKey = async (req, res) => {
-    await selectAllByKey('users', req.params).then(data => {
-        res.json({
-            status: 200,
-            user: data,
-            message: "users lists retrieved successfully"
-        })
-    }).catch(err => console.log(err))
+    res.json({
+        status: 200,
+        user: await selectAllByKey('users', req.params),
+        message: "users lists retrieved successfully"
+    })
 }
 
 // Method Post
 exports.post = async (req, res) => {
     console.log('Controller POST USER: ', req.body)
-
-    // SQL pour creer un users
     // values = (name, email, mobile)
-    await insertInto('users', { ...req.body }).then(async () => {
-        await selectAll('users').then(data => {
-            res.json({
-                status: 200,
-                listUser: data,
-                message: "Add Users successfully"
-            })
-        })
-    }).catch(err => console.log(err))
+    await insertInto('users', { ...req.body })
+
+    res.json({
+        status: 200,
+        listUser: await selectAll('users'),
+        message: "Add Users successfully"
+    })
 }
 
 // Method Edit One User
-exports.editOne = (req, res) => {
+exports.editOne = async (req, res) => {
     console.log('Controller EditOne USER: ', req.body)
+    // values = (name, email, mobile)
+    await updateOne('users', { ...req.body }, req.params.id)
 
-    updateOne('users', { ...req.body }, req.params.id).then(() => {
-        selectAll('users').then(data => {
-            res.json({
-                status: 200,
-                listUser: data,
-                message: "Update Users successfully"
-            })
-        })
-    }).catch(err => console.log(err))
+    res.json({
+        status: 200,
+        listUser: await selectAll('users'),
+        message: "Update Users successfully"
+    })
 }
 
 // Method Delete One
-exports.deleteOne = (req, res) => {
+exports.deleteOne = async (req, res) => {
     console.log('Controller DeleteOne USER: ', req.params.id)
-    deleteById('users', req.params.id).then(() => {
-        selectAll('users').then(data => {
-            res.json({
-                status: 200,
-                listUser: data,
-                message: "Delete Users successfully"
-            })
-        })
+    await deleteById('users', req.params.id)
+
+    res.json({
+        status: 200,
+        listUser: await selectAll('users'),
+        message: "Delete Users successfully"
     })
 }
 
 // Method Delete All
-exports.deleteAll = (req, res) => {
-    deleteAll('users').then(() => {
-        selectAll('users').then(data => {
-            res.json({
-                status: 200,
-                listUser: data,
-                message: "Delete All Users successfully"
-            })
-        })
+exports.deleteAll = async (req, res) => {
+    console.log('Controller DeleteAll User: ')
+    await deleteAll('users')
+    
+    res.json({
+        status: 200,
+        listUser: await selectAll('users'),
+        message: "Delete All Users successfully"
     })
 }

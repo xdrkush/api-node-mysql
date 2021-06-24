@@ -32,6 +32,7 @@ router.route('/getuser/:name')
 
 // Book
 router.route('/book')
+    .get(bookController.getAllBook)
     .post(bookController.post)
 
 // Book ID
