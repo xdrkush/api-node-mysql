@@ -3,21 +3,14 @@ const Book = require("../models/BookModel");
 class BookControllers {
   async getBook(req, res) {
     try {
-      Book.getAll((err, data) => {
-        console.log("data res", data);
-        if (err) {
-          console.log("err", err),
-            res.status(500).send({
-              message: err.message || "Une erreur est survenue",
-            });
-        } else {
-          return res.send({
-            method: req.method,
-            status: 200,
-            listBook: data,
-            message: "get Book join User successfully",
-          });
-        }
+      const book = new Book({});
+      book.getAll().then((data) => {
+        return res.send({
+          method: req.method,
+          status: 200,
+          listBook: data,
+          message: "get Book join User successfully",
+        });
       });
     } catch (error) {
       throw error;
@@ -29,8 +22,7 @@ class BookControllers {
     let newBook = new Book({ title, description, author_id });
     console.log("controller create Book", req.body, newBook);
     try {
-      Book.create(newBook, (err, data) => {
-        if (err) res.send(err);
+      newBook.create().then((data) => {
         return res.send({
           method: req.method,
           status: 200,
@@ -44,22 +36,16 @@ class BookControllers {
   }
 
   async getBookJoinUser(req, res) {
+    const { id } = req.params;
+    const book = new Book({ id });
     try {
-      Book.getBookJoinUser(String(req.params.id), (err, data) => {
-        console.log("dataid res", data);
-        if (err) {
-          console.log("err", err),
-            res.status(500).send({
-              message: err.message || "Une erreur est survenue",
-            });
-        } else {
-          return res.send({
-            method: req.method,
-            status: 200,
-            listBook: data,
-            message: "get Book join User successfully",
-          });
-        }
+      book.getBookJoinUser().then((data) => {
+        return res.send({
+          method: req.method,
+          status: 200,
+          listBook: data,
+          message: "get Book join User successfully",
+        });
       });
     } catch (error) {
       throw error;
@@ -67,17 +53,16 @@ class BookControllers {
   }
 
   async deleteOne(req, res) {
+    const { id } = req.params;
+    const book = new Book({});
     try {
-      Book.deleteOne(req.params.id, (err, data) => {
-        if (err) res.send(err);
-        else {
-          return res.send({
-            method: req.method,
-            status: 200,
-            listBook: data,
-            message: "Delete Book successfully",
-          });
-        }
+      book.deleteOne().then((data) => {
+        return res.send({
+          method: req.method,
+          status: 200,
+          listBook: data,
+          message: "Delete Book successfully",
+        });
       });
     } catch (error) {
       throw error;

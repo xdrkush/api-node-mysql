@@ -3,60 +3,59 @@ const User = require("../models/UserModel");
 class UserControllers {
   async get(req, res) {
     try {
-      User.getAll((err, data) => {
-        console.log("data res", data);
-        if (err) {
-          console.log("err", err),
-            res.status(500).send({
-              message: err.message || "Une erreur est survenue",
-            });
-        } else {
+      const user = new User({});
+      user
+        .getAll()
+        .then((data) => {
           return res.send({
             method: req.method,
             status: 200,
             listUser: data,
             message: "users lists retrieved successfully",
           });
-        }
-      });
+        })
+        .catch((err) => {
+          throw err;
+        });
     } catch (error) {
       throw error;
     }
   }
 
   async post(req, res) {
-    console.log("controller create User", req.body);
     const { name, email, mobile } = req.body;
-    let newUser = new User({ name, email, mobile });
     try {
-      User.create(newUser, (err, data) => {
-        if (err) res.send(err);
-        return res.send({
-          method: req.method,
-          status: 200,
-          listUser: data,
-          message: "Add Users successfully",
+      let newUser = new User({ name, email, mobile });
+      newUser
+        .create()
+        .then((data) => {
+          return res.send({
+            method: req.method,
+            status: 200,
+            listUser: data,
+            message: "Add Users successfully",
+          });
+        })
+        .catch((err) => {
+          throw err;
         });
-      });
     } catch (error) {
       throw error;
     }
   }
 
   async editOne(req, res) {
-    console.log("body editOne", req.body, req.params.id);
     const { name, email, mobile } = req.body;
-    console.log("controller create User", req.body);
     if (req.params.id && name && email && mobile) {
-      let UserObj = new User({
+      console.log("ici");
+      let userid = new User({
         id: Number(req.params.id),
         name,
         email,
         mobile,
       });
       try {
-        User.editOne(UserObj, (err, data) => {
-          if (err) res.send(err);
+        userid.editOne().then((data) => {
           return res.send({
             method: req.method,
             status: 200,
@@ -71,17 +70,15 @@ class UserControllers {
   }
 
   async deleteOne(req, res) {
+    const userid = new User({ id: req.params.id });
     try {
-      User.deleteOne(req.params.id, (err, data) => {
-        if (err) res.send(err);
-        else {
-          return res.send({
-            method: req.method,
-            status: 200,
-            listUser: data,
-            message: "Delete Users successfully",
-          });
-        }
+      userid.deleteOne().then((data) => {
+        return res.send({
+          method: req.method,
+          status: 200,
+          listUser: data,
+          message: "Delete Users successfully",
+        });
       });
     } catch (error) {
       throw error;

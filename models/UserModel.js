@@ -4,98 +4,105 @@
  ******************************/
 const connection = require("../config/ConnectionDB");
 
-// Model User
-const User = function (article) {
-    this.id = article.id
-    this.name = article.name
-    this.email = article.email
-    this.mobile = article.mobile;
-};
+class User {
+  constructor(user) {
+    this.id = user.id;
+    this.name = user.name;
+    this.email = user.email;
+    this.mobile = user.mobile;
+  }
 
-// Get All
-User.getAll = function (result) {
-  connection.getConnection(function (error, conn) {
-    if (error) throw error;
-    conn.query(`SELECT * FROM users`, (error, data) => {
-      if (error) throw error;
-      result(null, data);
-      // Mettre fin à la connexion avec la db
-      conn.release();
-    });
-  });
-};
-
-// Create
-User.create = function (newUsers, result) {
-  const { name, email, mobile } = newUsers;
-  connection.getConnection(function (error, conn) {
-    conn.query(
-      `
-        INSERT INTO users
-            SET name=:name, email=:email, mobile=:mobile
-      `, { name, email, mobile }, (error, data) => {
-        if (error) throw error;
-        conn.query(`SELECT * FROM users`, (error, data) => {
-          if (error) throw error;
-          result(null, data);
+  getAll() {
+    return new Promise((resolve, reject) => {
+      connection.getConnection((error, conn) => {
+        if (error) reject(error);
+        conn.query(`SELECT * FROM users`, (err, data) => {
+          if (err) reject(err);
+          resolve(data);
           conn.release();
         });
-      }
-    );
-  });
-};
+      });
+    });
+  }
 
-// Edit One
-User.editOne = function (articleObj, result) {
-  const { name, email, mobile, id } = articleObj;
-  console.log("edit", typeof articleObj.id);
-  connection.getConnection(function (error, conn) {
-    conn.query(
-      `
-        UPDATE users 
-            SET name = :name,
-                email = :email,
-                mobile = :mobile
-            WHERE id = :id;
-      `, { name, email, mobile, id }, (error, data) => {
-        if (error) throw error;
-        conn.query(`SELECT * FROM users`, (error, data) => {
-          if (error) throw error;
-          result(null, data);
+  create() {
+    const { name, email, mobile } = this;
+    return new Promise((resolve, reject) => {
+      connection.getConnection(function (err, conn) {
+        if (err) reject(err);
+        conn.query(`
+          INSERT INTO users
+              SET name=:name, email=:email, mobile=:mobile
+        `, { name, email, mobile }, (err, data) => {
+            if (err) reject(err);
+            conn.query(`SELECT * FROM users`, (err, data) => {
+              if (err) reject(err);
+              resolve(data);
+              conn.release();
+            });
+          }
+        );
+      });
+    });
+  }
+
+  editOne() {
+    const { name, email, mobile, id } = this;
+    return new Promise((resolve, reject) => {
+      connection.getConnection(function (err, conn) {
+        if (err) reject(err);
+        conn.query( `
+          UPDATE users 
+              SET name = :name,
+                  email = :email,
+                  mobile = :mobile
+              WHERE id = :id;
+        `, { name, email, mobile, id }, (err, dataa) => {
+            if (err) reject(err);
+            conn.query(`SELECT * FROM users`, (err, data) => {
+              if (err) reject(err);
+              resolve(data);
+            });
+            conn.release();
+          }
+        );
+      });
+    });
+  }
+
+  deleteOne() {
+    const { id } = this;
+    return new Promise((resolve, reject) => {
+      connection.getConnection(function (err, conn) {
+        if (err) reject(err);
+        conn.query( `DELETE FROM users WHERE id = :id`, { id }, (err, dataa) => {
+          if (err) reject(err);
+          conn.query(`SELECT * FROM users`, (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+            conn.release();
+          });
         });
-        conn.release();
-      }
-    );
-  });
-};
-
-// Delete One
-User.deleteOne = function (id, result) {
-  connection.getConnection(function (error, conn) {
-    conn.query(`DELETE FROM users WHERE id = :id`, { id }, (error, data) => {
-      if (error) throw error;
-      conn.query(`SELECT * FROM users`, (error, data) => {
-        if (error) throw error;
-        result(null, data);
-        conn.release();
       });
     });
-  });
-};
+  }
 
-// Delete All
-User.deleteAll = function (result) {
-  connection.getConnection(function (error, conn) {
-    conn.query(`DELETE FROM users`, (error, data) => {
-      if (error) throw error;
-      conn.query(`SELECT * FROM users`, (error, data) => {
-        if (error) throw error;
-        result(null, data);
-        conn.release();
+  deleteAll() {
+    return new Promise((resolve, reject) => {
+      connection.getConnection(function (error, conn) {
+        if (error) reject(error);
+        conn.query(`DELETE FROM users`, (err, data) => {
+          if (err) reject(err);
+          conn.query(`SELECT * FROM users`, (errr, data) => {
+            if (errr) reject(errr);
+            resolve(data);
+            conn.release();
+          });
+        });
       });
     });
-  });
-};
+  }
+}
 
 // Book
 module.exports = User;
