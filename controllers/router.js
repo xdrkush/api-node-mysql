@@ -9,6 +9,7 @@ const express = require('express'),
  *************/
 const userController = require('./userController')
 const bookController = require('./bookController')
+const backupController = require('./backupController')
 
 /*
  * Router
@@ -27,6 +28,7 @@ router.route('/user/:id')
 
 // Book
 router.route('/book')
+    .get(bookController.getBook)
     .post(bookController.post)
 
 // Book ID
@@ -35,6 +37,12 @@ router.route('/book/:id')
 
 router.route('/book/user/:id')
     .get(bookController.getBookJoinUser)
+
+router.route('/backup')
+    .post(backupController.newBackup)
+    
+router.route('/restore')
+    .post(backupController.restoreLastBackup)
 
 /***********
  * / Router

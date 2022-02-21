@@ -30,6 +30,7 @@ exports.post = async (req, res) => {
         req.body.email,
         req.body.mobile
     ];
+    console.log(req.body)
     await db.query(sql, [values], function (err, data, fields) {
         if (err) throw err;
         // SQL récupération de tout les users

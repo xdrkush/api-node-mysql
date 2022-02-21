@@ -6,6 +6,22 @@
  * Controller
  *************/
 
+// Method get All books
+exports.getBook = async (req, res) => {
+    // Récupération des books en relation avec l'id de user = books.author_id
+    let sql = `SELECT * FROM books;`
+
+    await db.query(sql, function (err, data, fields) {
+        if (err) throw err;
+        res.json({
+            status: 200,
+            listBook: data,
+            message: "get Book join User successfully"
+        })
+    })
+}
+
+// Method get book join with id (users) author_id
 exports.getBookJoinUser = async (req, res) => {
     // Récupération des books en relation avec l'id de user = books.author_id
     let sql = `SELECT users.name, books.title, books.description, books.id
@@ -23,6 +39,7 @@ exports.getBookJoinUser = async (req, res) => {
         })
     })
 }
+
 
 // Method Post
 exports.post = async (req, res) => {
@@ -54,7 +71,7 @@ exports.post = async (req, res) => {
     })
 }
 
-// Method Delete One
+// Method Delete One books & res book join with author_id book deleted
 exports.deleteOne = async (req, res) => {
     let author;
     // SQL pour récuperer l'id de l'author 
