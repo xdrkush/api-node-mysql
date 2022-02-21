@@ -15,3 +15,7 @@ CREATE TABLE  `books` (
 `description` VARCHAR( 100 ) NOT NULL ,
 `author_id` INT NOT NULL
 ) ENGINE = INNODB;
+
+INSERT INTO users SET name = 'bruno', email = 'bruno@bru.no', mobile = '06.06.06.06.06';
+
+INSERT INTO books SET title = 'livre 1', description = 'ma super description 1', author_id = '1';

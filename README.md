@@ -47,7 +47,7 @@ exit
 ```
 cd api-node-mysql
 npm i
-nodemon server.js
+nodemon index.js
 ```
 
 (Il ce peux que les commandes soit à peine exact le tuto est en cours de réalisations n'hésiter pas à me tenir au courant)
